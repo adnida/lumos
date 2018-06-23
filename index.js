@@ -11,19 +11,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-'use strict';
+"use strict";
+
+// Set up https for saving to Firebase database
+const https = require("https");
+
+const options = {
+  host: "smartlivinghackathon.firebaseio.com",
+  path: "/test/logs.json",
+  method: "PUT",
+  headers: {
+    "Content-Type": "application/json"
+  }
+};
+
+const callback = function(response) {
+  const str = "";
+  response.on("data", function(chunk) {
+    str += chunk;
+  });
+
+  response.on("end", function() {
+    console.log(str);
+  });
+};
 
 // Import the Dialogflow module from the Actions on Google client library.
-const {dialogflow} = require('actions-on-google');
+const { dialogflow } = require("actions-on-google");
 
 // Import the firebase-functions package for deployment.
-const functions = require('firebase-functions');
+const functions = require("firebase-functions");
 
 // Instantiate the Dialogflow client.
-const app = dialogflow({debug: true});
+const app = dialogflow({ debug: true });
 
-app.intent('express-feelings', (conv, {text, emotions}) => {
-  conv.followup('feeling-registered-event', {emotions});
+app.intent("express-feelings", (conv, { text, emotions }) => {
+  const body = JSON.stringify({
+    log: text
+  });
+  https.request(options, callback).end(body);
+  conv.followup("feeling-registered-event", { emotions });
 });
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
