@@ -53,5 +53,9 @@ app.intent("express-feelings", (conv, { text, emotions }) => {
   conv.followup("feeling-registered-event", { emotions });
 });
 
+app.intent('feeling-registered-followup - yes', (conv) => {
+  conv.followup('ask-rephrase-event');
+});
+
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
