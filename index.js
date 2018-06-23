@@ -13,28 +13,27 @@
 
 "use strict";
 
-// Set up https for saving to Firebase database
-const https = require("https");
+const firebase = require("firebase");
 
-const options = {
-  host: "smartlivinghackathon.firebaseio.com",
-  path: "/test/logs.json",
-  method: "PUT",
-  headers: {
-    "Content-Type": "application/json"
-  }
+const config = {
+  apiKey: "AIzaSyDbZA-zf_KYp0CsREIotlVAhnxxg3LCF8o",
+  authDomain: "actions-codelab-fc3a8.firebaseapp.com",
+  databaseURL: "https://actions-codelab-fc3a8.firebaseio.com",
+  projectId: "actions-codelab-fc3a8",
+  storageBucket: "actions-codelab-fc3a8.appspot.com",
+  messagingSenderId: "659595956569"
 };
 
-const callback = function(response) {
-  const str = "";
-  response.on("data", function(chunk) {
-    str += chunk;
-  });
+firebase.initializeApp(config);
 
-  response.on("end", function() {
-    console.log(str);
-  });
-};
+function writeLog(userId, log) {
+  firebase
+    .database()
+    .ref("test/" + userId)
+    .set({
+      log: log
+    });
+}
 
 // Import the Dialogflow module from the Actions on Google client library.
 const { dialogflow } = require("actions-on-google");
@@ -46,6 +45,7 @@ const functions = require("firebase-functions");
 const app = dialogflow({ debug: true });
 
 app.intent("ask-elaboration", (conv, { text, emotions }) => {
+  writeLog(new Date().toString(), "hello");
   const body = JSON.stringify({
     log: text
   });
@@ -53,12 +53,12 @@ app.intent("ask-elaboration", (conv, { text, emotions }) => {
   conv.followup("ask-blaming-event", { emotions });
 });
 
-app.intent('ask-blaming - yes', (conv) => {
-  conv.followup('ask-rephrase-event');
+app.intent("ask-blaming - yes", conv => {
+  conv.followup("ask-rephrase-event");
 });
 
-app.intent('ask-rephrase', (conv) => {
-  conv.followup('ask-about-feelings-event');
+app.intent("ask-rephrase", conv => {
+  conv.followup("ask-about-feelings-event");
 });
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
