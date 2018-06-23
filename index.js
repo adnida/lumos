@@ -45,15 +45,15 @@ const functions = require("firebase-functions");
 // Instantiate the Dialogflow client.
 const app = dialogflow({ debug: true });
 
-app.intent("express-feelings", (conv, { text, emotions }) => {
+app.intent("ask-elaboration", (conv, { text, emotions }) => {
   const body = JSON.stringify({
     log: text
   });
   https.request(options, callback).end(body);
-  conv.followup("feeling-registered-event", { emotions });
+  conv.followup("ask-blaming-event", { emotions });
 });
 
-app.intent('feeling-registered-followup - yes', (conv) => {
+app.intent('ask-blaming - yes', (conv) => {
   conv.followup('ask-rephrase-event');
 });
 
