@@ -57,5 +57,9 @@ app.intent('ask-blaming - yes', (conv) => {
   conv.followup('ask-rephrase-event');
 });
 
+app.intent('ask-rephrase', (conv) => {
+  conv.followup('ask-about-feelings-event');
+});
+
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
