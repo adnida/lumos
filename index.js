@@ -48,6 +48,7 @@ const app = dialogflow({ debug: true });
 
 writeLog(new Date().toString(), "hello");
 app.intent("ask-about-day", conv => {
+  conv.ask('<speak><par><media xml:id="sparkle"><audio src="https://github.com/adnida/lumos/raw/master/media/sparkle.mp3"/></media><media xml:id="words" begin="sparkle.end-3s"><speak>Good evening Bella! Did anything interesting happen today?</speak></media></par></speak>');
   conv.followup("ask-about-feelings-event");
 });
 
