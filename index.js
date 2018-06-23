@@ -13,26 +13,28 @@
 
 "use strict";
 
-const firebase = require("firebase");
+const admin = require("firebase-admin");
 
-const config = {
-  apiKey: "AIzaSyDbZA-zf_KYp0CsREIotlVAhnxxg3LCF8o",
-  authDomain: "actions-codelab-fc3a8.firebaseapp.com",
-  databaseURL: "https://actions-codelab-fc3a8.firebaseio.com",
-  projectId: "actions-codelab-fc3a8",
-  storageBucket: "actions-codelab-fc3a8.appspot.com",
-  messagingSenderId: "659595956569"
-};
+// Fetch the service account key JSON file contents
+var serviceAccount = require("./actions-codelab-ff7f90d6cddb.json");
 
-firebase.initializeApp(config);
+// Initialize the app with a service account, granting admin privileges
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://actions-codelab-fc3a8.firebaseio.com"
+});
+
+// As an admin, the app has access to read and write all data, regardless of Security Rules
+var db = admin.database();
+var ref = db.ref("test");
+ref.once("value", function(snapshot) {
+  console.log(snapshot.val());
+});
 
 function writeLog(userId, log) {
-  firebase
-    .database()
-    .ref("test/" + userId)
-    .set({
-      log: log
-    });
+  ref.set({
+    log: log
+  });
 }
 
 // Import the Dialogflow module from the Actions on Google client library.
@@ -43,6 +45,11 @@ const functions = require("firebase-functions");
 
 // Instantiate the Dialogflow client.
 const app = dialogflow({ debug: true });
+
+writeLog(new Date().toString(), "hello");
+app.intent("ask-about-day", conv => {
+  conv.followup("ask-about-feelings-event");
+});
 
 app.intent("ask-elaboration", (conv, { text, emotions }) => {
   writeLog(new Date().toString(), "hello");
