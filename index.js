@@ -22,7 +22,7 @@ const functions = require('firebase-functions');
 // Instantiate the Dialogflow client.
 const app = dialogflow({debug: true});
 
-app.intent('express feelings', (conv, {text, emotions}) => {
+app.intent('express-feelings', (conv, {text, emotions}) => {
   conv.followup('feeling-registered-event', {emotions});
 });
 
