@@ -48,7 +48,9 @@ const app = dialogflow({ debug: true });
 
 writeLog(new Date().toString(), "hello");
 app.intent("ask-about-day", conv => {
-  conv.ask('<speak><par><media xml:id="sparkle"><audio src="https://github.com/adnida/lumos/raw/master/media/sparkle.mp3"/></media><media xml:id="words" begin="sparkle.end-3s"><speak>Good evening Bella! Did anything interesting happen today?</speak></media></par></speak>');
+  conv.ask(
+    '<speak><par><media xml:id="sparkle"><audio src="https://github.com/adnida/lumos/raw/master/media/sparkle.mp3"/></media><media xml:id="words" begin="sparkle.end-3s"><speak>Good evening Bella! Did anything interesting happen today?</speak></media></par></speak>'
+  );
   conv.followup("ask-about-feelings-event");
 });
 
@@ -67,6 +69,34 @@ app.intent("ask-blaming - yes", conv => {
 
 app.intent("ask-rephrase", conv => {
   conv.followup("ask-about-feelings-event");
+});
+
+app.intent("ask-physical", conv => {
+  if (!conv.surface.capabilities.has("actions.capability.SCREEN_OUTPUT")) {
+    conv.ask(
+      "Sorry, try this on a screen device or select the " +
+        "phone surface in the simulator."
+    );
+    return;
+  }
+  // Create a list
+  conv.ask(
+    new List({
+      title: "Schedule",
+      items: {
+        // Add the first item to the list
+        [SELECTION_KEY_PURE_YOGA]: {
+          synonyms: ["pure yoga"],
+          title: "Pure Yoga, tomorrow at 3pm",
+          description: "Orchard Road",
+          image: new Image({
+            url: "http://www.pure-yoga.com/asset/image/pure-menu-logo.png",
+            alt: "Pure Yoga Logo"
+          })
+        }
+      }
+    })
+  );
 });
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
